@@ -26,7 +26,7 @@ if 0 < a < 9 and 0 < b < 9 and 0 < c < 9 and 0 < d < 9:
 else:
     print('Числа должны быть от 1 до 8')
 
-    df['diff_11_12'] =  df['T_data_1_2'] - df['T_data_1_1']
+df['diff_11_12'] =  df['T_data_1_2'] - df['T_data_1_1']
 df['diff_13_12'] =  df['T_data_1_3'] - df['T_data_1_2']
 df['diff_13_11'] =  df['T_data_1_3'] - df['T_data_1_1']
 
@@ -52,6 +52,28 @@ df['diff_4_3'] =  df['T_data_4_1'] - df['T_data_3_3']
 df['diff_5_4'] =  df['T_data_5_1'] - df['T_data_4_3']
 
 df['H_data/AH_data'] = df['H_data'] / df['AH_data']
+
+df['t_mean'] = df[['T_data_1_1', 'T_data_1_2','T_data_1_3', 'T_data_2_1','T_data_2_2','T_data_2_3','T_data_3_1','T_data_3_2',
+   'T_data_3_3', 'T_data_4_1', 'T_data_4_2', 'T_data_4_3', 'T_data_5_1', 'T_data_5_2','T_data_5_3']].mean(axis=1)
+
+df['t_std'] = df[['T_data_1_1', 'T_data_1_2','T_data_1_3', 'T_data_2_1','T_data_2_2','T_data_2_3','T_data_3_1','T_data_3_2',
+   'T_data_3_3', 'T_data_4_1', 'T_data_4_2', 'T_data_4_3', 'T_data_5_1', 'T_data_5_2','T_data_5_3']].std(axis=1)
+
+df['t_min'] = df[['T_data_1_1', 'T_data_1_2','T_data_1_3', 'T_data_2_1','T_data_2_2','T_data_2_3','T_data_3_1','T_data_3_2',
+   'T_data_3_3', 'T_data_4_1', 'T_data_4_2', 'T_data_4_3', 'T_data_5_1', 'T_data_5_2','T_data_5_3']].min(axis=1)
+
+df['t_max'] = df[['T_data_1_1', 'T_data_1_2','T_data_1_3', 'T_data_2_1','T_data_2_2','T_data_2_3','T_data_3_1','T_data_3_2',
+   'T_data_3_3', 'T_data_4_1', 'T_data_4_2', 'T_data_4_3', 'T_data_5_1', 'T_data_5_2','T_data_5_3']].max(axis=1)
+
+
+df['H_data/t_mean'] = df['H_data'] / df['t_mean']
+df['H_data/t_max'] = df['H_data'] / df['t_max']
+
+
+df['AH_data/t_mean'] = df['AH_data'] / df['t_mean']
+df['AH_data/t_max'] = df['AH_data'] / df['t_max']
+
+
 
 
     
