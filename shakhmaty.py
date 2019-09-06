@@ -26,7 +26,34 @@ if 0 < a < 9 and 0 < b < 9 and 0 < c < 9 and 0 < d < 9:
 else:
     print('Числа должны быть от 1 до 8')
 
-    
+    df['diff_11_12'] =  df['T_data_1_2'] - df['T_data_1_1']
+df['diff_13_12'] =  df['T_data_1_3'] - df['T_data_1_2']
+df['diff_13_11'] =  df['T_data_1_3'] - df['T_data_1_1']
+
+df['diff_21_22'] =  df['T_data_2_1'] - df['T_data_2_2']
+df['diff_23_22'] =  df['T_data_2_3'] - df['T_data_2_2']
+df['diff_23_21'] =  df['T_data_2_3'] - df['T_data_2_1']
+
+df['diff_31_32'] =  df['T_data_3_1'] - df['T_data_3_2']
+df['diff_33_32'] =  df['T_data_3_3'] - df['T_data_3_2']
+df['diff_33_31'] =  df['T_data_3_3'] - df['T_data_3_1']
+
+df['diff_41_42'] =  df['T_data_4_1'] - df['T_data_4_2']
+df['diff_43_42'] =  df['T_data_4_3'] - df['T_data_4_2']
+df['diff_43_41'] =  df['T_data_4_3'] - df['T_data_4_1']
+
+df['diff_51_52'] =  df['T_data_5_1'] - df['T_data_5_2']
+df['diff_53_52'] =  df['T_data_5_3'] - df['T_data_5_2']
+df['diff_53_51'] =  df['T_data_5_3'] - df['T_data_5_1']
+
+df['diff_2_1'] =  df['T_data_2_1'] - df['T_data_1_3']
+df['diff_3_2'] =  df['T_data_3_1'] - df['T_data_2_3']
+df['diff_4_3'] =  df['T_data_4_1'] - df['T_data_3_3']
+df['diff_5_4'] =  df['T_data_5_1'] - df['T_data_4_3']
+
+df['H_data/AH_data'] = df['H_data'] / df['AH_data']
+
+
     
     import pandas as pd
 import numpy as np
