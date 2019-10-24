@@ -546,3 +546,96 @@ def identify_outlyers(df, min, max):
 
 df1, to_drop, to_drop_after_corr = drop_corr_col(fin.drop(['Unnamed_0', 'ottok'] , axis=1),  treshold = 0.6, persent = 1)
 df, outlyers_table = outlyers(fin, fin.columns, del_or_min_max=True )
+
+
+def check_for_cut_feat(df, nmin=3, nmax=10, retype=False): 
+    num_unique=[]
+    columns_list=[]
+    for column in df.columns:
+        num_unique.append(df[column].nunique())
+        columns_list.append(column)
+    cols_df = pd.DataFrame(num_unique,columns_list).reset_index()
+    cols_df.columns = 'feature', 'num'
+
+    to_drop_nunique = list(cols_df[cols_df['num'] == 1]['feature'])
+    print(len(to_drop_nunique))
+    
+    to_bin = list(cols_df[cols_df['num'] == 2]['feature'])
+    print(len(to_bin))
+    
+    cat_features = list(cols_df[(cols_df['num'] <= nmax) & (cols_df['num'] >= nmin)]['feature'])
+    print(len(cat_features))
+    
+    df_ = df.drop(to_drop_nunique, axis=1)
+    
+    le = LabelEncoder()
+    for i in to_bin:
+        df_[i] = le.fit_transform(df_[i])
+    
+    if retype:
+        for num_to_cat in cat_features:
+            df_[num_to_cat] = df_[num_to_cat].astype(object)
+        df_ = pd.get_dummies(df_, columns=cat_features)
+    
+    return df_, cat_features, to_drop_nunique, to_bin
+
+
+
+#df2.drop(un_unique(df2), axis=1, inplace = True)
+
+df2, cat_features, to_drop_nunique, to_bin = check_for_cut_feat(df2, nmin=3, nmax=10, retype=True)
+
+
+vas_id, total_offers, take, not_take, conversion, share = [], [], [], [], [], []
+
+for i in df['vas_id'].unique():
+    unique_vas = df[df['vas_id']==i]
+    vals = unique_vas['target'].value_counts()
+    vas_id.append(i)
+    total_offers.append(len(unique_vas))
+    not_take.append(vals.values[0])
+    try:
+        take.append(vals.values[1])
+    except: take.append(0)
+    try:
+        conversion.append(int(round(vals[1]/len(unique_vas),2)*100))
+    except: conversion.append(0)
+    
+    share.append(int(round(len(unique_vas)/len(df),2)*100))
+            
+conversion = pd.DataFrame([ vas_id, total_offers, take, not_take, conversion, share]).T
+conversion.columns =  'vas_id', 'total_offers', 'take', 'not_take', 'conversion, %', 'share,%'
+print(f'total offers {len(df2)}')
+conversion.sort_values(by='total_offers', ascending= False)
+
+
+month, vas_id, total_offers, take, not_take, conversion = [], [], [], [], [], [] 
+
+for k in df['month'].unique():
+    df3 = df[df['month'] == k]
+    
+    for i in df3['vas_id'].unique():
+        month.append(k)
+        unique_vas = df3[df3['vas_id']==i]
+        vals = unique_vas['target'].value_counts()
+        vas_id.append(i)
+        total_offers.append(len(unique_vas))
+        not_take.append(vals.values[0])
+        try:
+            take.append(vals.values[1])
+        except: take.append(0)
+        try:
+            conversion.append(int(round(vals[1]/len(unique_vas),2)*100))
+        except: conversion.append(0)
+            
+conversion = pd.DataFrame([month, vas_id, total_offers, take, not_take, conversion]).T
+conversion.columns = 'month', 'vas_id', 'total_offers', 'take', 'not_take', 'conversion, %'
+conversion.sort_values(by=['month','total_offers'], ascending=[True, False])
+
+conversion.month = np.where(conversion.month == 1, 13, conversion.month)
+conversion = conversion.sort_values(by='month')
+conversion
+
+# Найдем id, которым делали предложение более 1 раза
+ids = df.groupby('id')['vas_id'].count()[df.groupby('id')['vas_id'].count() > 1].index.tolist()
+df[df['id'].isin(ids)]
