@@ -397,3 +397,60 @@ def plot_graph(fpr, tpr, fpr1, tpr1, model, model1, gini, gini1, df):# , DECILE,
 
     plt.tight_layout()
     plt.savefig('foo.png')
+    
+    
+    
+    
+train, test = train_test_split(df, test_size = 0.3)
+train = train.reset_index(drop=True)
+test = test.reset_index(drop=True)
+
+features_train = train[['age', 'pdays', 'contact', 'duration', 'housing', 'loan', 'previous']]
+label_train = train['target']
+features_test = test[['age', 'pdays', 'contact', 'duration', 'housing', 'loan', 'previous']]
+label_test = test['target']
+
+from sklearn.ensemble import GradientBoostingClassifier
+clf = GradientBoostingClassifier(max_depth=1, max_features=2)
+
+clf.fit(features_train,label_train)
+
+pred_train = clf.predict(features_train)
+pred_test = clf.predict(features_test)
+
+from sklearn.metrics import accuracy_score
+accuracy_train = accuracy_score(pred_train,label_train)
+accuracy_test = accuracy_score(pred_test,label_test)
+
+from sklearn import metrics
+fpr, tpr, _ = metrics.roc_curve(np.array(label_train), clf.predict_proba(features_train)[:,1])
+auc_train = metrics.auc(fpr,tpr)
+
+fpr1, tpr1, _ = metrics.roc_curve(np.array(label_test), clf.predict_proba(features_test)[:,1])
+auc_test = metrics.auc(fpr1,tpr1)
+
+print(accuracy_train, accuracy_test, auc_train, auc_test)
+
+from plotting import plot_graph
+from plotting import scoring
+from plotting import gains_table
+import warnings
+warnings.filterwarnings("ignore")
+%matplotlib inline
+
+scores_train = scoring(features_train,clf,label_train)
+scores_test = scoring(features_test,clf,label_test)
+
+lift_train = pd.concat([features_train,scores_train],axis=1)
+lift_test = pd.concat([features_test,scores_test],axis=1)
+
+agg_train = gains_table(lift_train,['DECILE'],'TARGET','SCORE')
+agg_test = gains_table(lift_test,['DECILE'],'TARGET','SCORE')
+
+gini_train = metrics.auc(fpr,tpr)
+gini_test = metrics.auc(fpr1,tpr1)
+
+agg1=gains_table(lift_train,['DECILE'],'TARGET','SCORE')
+agg2=gains_table(lift_test,['DECILE'],'TARGET','SCORE')
+
+plot_graph(fpr, tpr, fpr1, tpr1,  'TRAIN ', 'TEST', gini_train, gini_test, agg1)
