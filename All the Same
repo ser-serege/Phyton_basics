@@ -1,0 +1,17 @@
+"""
+In this mission you should check if all elements in the given list are equal.
+Input: List.
+Output: Bool.
+Example:
+
+all_the_same([1, 1, 1]) == True
+all_the_same([1, 2, 1]) == False
+all_the_same(['a', 'a', 'a']) == True
+all_the_same([]) == True
+"""
+def all_the_same(elements: List[Any]) -> bool:
+    k = [i for i in elements if i == elements[0]]
+    if len(elements) == len(k):
+        return True
+    else: 
+        return False
